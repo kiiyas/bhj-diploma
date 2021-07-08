@@ -15,14 +15,13 @@ class AccountsWidget {
   //При нажатии на один из существующих счетов (которые отображены в боковой колонке),
   //вызывает AccountsWidget.onSelectAccount()
   registerEvents() {
-    const createAccount = this.element.querySelector('.create-account');
-    createAccount.addEventListener('click', () => {
-      App.getModal('createAccount').open();
-    })
-
-    this.element.addEventListener('click', e => {
-      if(!e.target.closest('.header')) this.onSelectAccount(e);
-    })
+    this.element.onclick = (e) => {
+      if(e.target.closest('.create-account')) {
+        App.getModal('createAccount').open();
+      } else if(!e.target.closest('.header')) {
+        this.onSelectAccount(e.target);
+      }
+    };    
   }
 
   //Метод доступен только авторизованным пользователям (User.current()).
@@ -32,13 +31,13 @@ class AccountsWidget {
   update() {
     if (!User.current()) return;
 
-    Account.list(User.fetch((err,response) => response.user), (err, response) => {
+    Account.list(User.current((err,response) => response.user), (err, response) => {
       if (response && response.success) {
         this.clear();
-        this.renderItem(response.data); //при этом варианте data передается в renderItem(data) без ошибок, но в регистрацию прилетает null и при создании нового счета
-        // for (let i of response.data) { //а при этом не передается нормально
-        //   this.renderItem(i);
-        // }
+        //this.renderItem(response.data); //при этом варианте data передается в renderItem(data) без ошибок, но в регистрацию прилетает null и при создании нового счета
+        for (let i of response.data) { //а при этом не передается нормально
+          this.renderItem(i);
+        }
         
       }
     })

@@ -11,16 +11,14 @@ class CreateTransactionForm extends AsyncForm {
   //Обновляет в форме всплывающего окна выпадающий список
   renderAccountsList() {
 
-    Account.list(User.fetch(), (err, response) => {
+    Account.list(User.current(), (err, response) => {
       if (response.success) {
         this.select = this.element.querySelector('.accounts-select');
         this.select.innerHTML = '';
         response.data.forEach(e => {
           this.select.insertAdjacentHTML('beforeend', `<option value="${e.id}">${e.name}</option>`);
         });        
-      } else {
-        console.error(err);
-      }
+      } 
     })
   }
 
@@ -34,10 +32,12 @@ class CreateTransactionForm extends AsyncForm {
       if (response && response.success) {
         App.update();
         this.element.reset();
-        (data.type == 'income') ? App.getModal('newIncome').close() : App.getModal('newExpense').close();
+        //(data.type == 'income') ? App.getModal('newIncome').close() : App.getModal('newExpense').close();
+        //сокращенная запись(коммент.руководителя):
+        App.getModal((data.type == 'income') ? 'newIncome' : 'newExpense').close();
       }
       else {
-        console.error(err);
+        alert(response.error);
       }
     })  
   }

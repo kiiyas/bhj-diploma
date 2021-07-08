@@ -10,8 +10,8 @@ class TransactionsPage {
 
   //Вызывает метод render для отрисовки страницы
   update() {    
-    this.render(); 
-    //? если метод render() был ранее вызван с какими-то опциями, 
+    this.render(this.lastOptions); 
+    // если метод render() был ранее вызван с какими-то опциями, 
     //при вызове update() эти опции необходимо передать повторно
   }
 
@@ -40,14 +40,12 @@ class TransactionsPage {
     if (!this.lastOptions) return;
     
     if (confirm('Вы дейсвительно хотите удалить счёт?')) {
-      Account.list(User.fetch((err,response) => response.user), (err, response) => {
+      Account.list(User.current((err,response) => response.user), (err, response) => {
         Account.remove(response.data.find(e => e.id == this.lastOptions.account_id), (err, response) => {
               this.clear();
               if (response && response.success) {
                 App.updateWidgets();                
-              } else {
-                console.error(err);
-              }
+              } 
             })
       })
 
@@ -63,9 +61,7 @@ class TransactionsPage {
       Transaction.remove({id: id}, (err, response) => {
         if (response && response.success) {
           App.update();
-        } else {
-          console.error(err);
-        }
+        } 
       })
     }
   }
@@ -80,9 +76,7 @@ class TransactionsPage {
     Account.get(options.account_id, (err, response) => {
       if (response && response.success) {
         this.renderTitle(response.data.name);
-      } else {
-        console.error(err);
-      }
+      } 
     });
 
     Transaction.list(options, (err, response) => {      
@@ -97,7 +91,7 @@ class TransactionsPage {
   clear() {
     let arr = [];
     this.renderTransactions(arr);
-    this.renderTitle('Название счёта');
+    this.renderTitle('Название счета');
     this.lastOptions = null;
   }
 

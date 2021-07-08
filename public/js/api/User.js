@@ -4,7 +4,7 @@
 class User {
   static URL = '/user';
   //Устанавливает текущего пользователя в локальном хранилище
-    static setCurrent(user) {
+  static setCurrent(user) {
     localStorage.setItem('user', JSON.stringify(user));
   };
 
@@ -20,18 +20,17 @@ class User {
 
   //Получает информацию о текущем авторизованном пользователе
   static fetch(callback) {
-    createRequest({
+    const xhr = createRequest({
       method: 'GET',
       url: this.URL + '/current',
       responseType: 'json',
-      callback: (err, response) => {
-        
+      callback: (err, response) => {        
           if (response && response.user) {
             this.setCurrent(response.user);
-          } else if (!response.success) {
+          } else {
             this.unsetCurrent();
           }
-        //callback(err, response);
+        callback(err, response);
       }
     });
   };
@@ -76,7 +75,7 @@ class User {
       url: this.URL + '/logout',
       method: 'POST',
       responseType: 'json',
-      //data,
+      data,
       callback: (err, response) => {
         if (response.success) {
           this.unsetCurrent();

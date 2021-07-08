@@ -10,7 +10,7 @@ class LoginForm extends AsyncForm {
         App.setState('user-logged');        
         App.getModal('login').close();
       } else {
-        console.error(err);
+        alert(response.error);
       }
     });
   }
